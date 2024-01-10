@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<sub-flow name="create-asset-implementation" doc:id="29eaa4b0-eda8-4a11-8b35-f1fd14bf9875" >
+		<logger level="INFO" doc:name="creating a new asset in a salesforce implementation get started" doc:id="32915065-7397-4d25-95f5-f8d710d11c47" message="create_asset_started" />
+		<ee:transform doc:name="Dw set create a new asset request transform" doc:id="176096d9-797b-4cf5-b5fb-e3f5476797b7" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts\Post-Request.dwl" />
+			</ee:message>
+		</ee:transform>
+		<salesforce:create type="Asset" doc:name="create asset on salesforce" doc:id="ff4d8bd9-925e-402e-9463-594c91deee3e" config-ref="Salesforce_Config1"/>
+		<ee:transform doc:name="Dw set to create asset response transform" doc:id="7370bc7a-79b3-48f0-a4e3-5c4fc43a4722" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts\Post-Response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="creating a new asset in a salesforce implementation get ended" doc:id="96c18039-c478-4f4b-8abe-77770c2c9692" message="create_asset_ended" />
+	</sub-flow>
+	<sub-flow name="getall-asset-implementation" doc:id="b3c55f5c-55e1-4174-a546-a4acbc68b3fc" >
+		<logger level="INFO" doc:name="getting all the asset of the salesforce implementation flow started" doc:id="1ad4a35d-9f10-4a1b-be9b-783365e674be" message="getting_all_asset_started" />
+		<salesforce:query-all doc:name="Query from get all asset  from salesforce" doc:id="8a0ef171-da8b-4fce-9cfc-10d822982cb3" config-ref="Salesforce_Config1">
+			<salesforce:salesforce-query ><![CDATA[SELECT AccountId,Address,AssetLevel,AssetProvidedById,AssetServicedById,City,ContactId,Country,CreatedById,CreatedDate,CurrentAmount,CurrentLifecycleEndDate,CurrentMrr,CurrentQuantity,Description,GeocodeAccuracy,HasLifecycleManagement,Id,InstallDate,IsCompetitorProduct,IsDeleted,IsInternal,LastModifiedById,LastModifiedDate,LastReferencedDate,LastViewedDate,Latitude,LifecycleEndDate,LifecycleStartDate,Longitude,Name,OwnerId,ParentId,PostalCode,Price,Product2Id,ProductCode,PurchaseDate,Quantity,RootAssetId,SerialNumber,State,Status,StockKeepingUnit,Street,SystemModstamp,TotalLifecycleAmount,UsageEndDate FROM Asset]]></salesforce:salesforce-query>
+		</salesforce:query-all>
+		<ee:transform doc:name="Dw get all asset response from salesforce" doc:id="36cc1339-f3d5-4e70-8656-12058ad85ddc" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts\Getall-Response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="getting all the ended of the salesforce implementation flow ended" doc:id="ec435f13-aadb-4f3d-93a1-1266cf9c9186" message="getting_all_asset_ended" />
+	</sub-flow>
+	<sub-flow name="get-by-id-asset-implementation" doc:id="9b085140-c6bc-4bb4-8735-3f3b7415e42f" >
+		<logger level="INFO" doc:name="retrieving a particular asset by Id implementation gets started" doc:id="13d37cd7-514f-41e6-9550-ecb1a8f69eb3" message="getting_asset_by_Id_started" />
+		<set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable for storing id" doc:id="6688489e-bb4c-45c0-9674-da519b4b07a3" variableName="id" />
+		<salesforce:query doc:name="Query to get asset only  by Id" doc:id="dbd27b5b-9dfb-4218-a533-71d53173c754" config-ref="Salesforce_Config1">
+			<salesforce:salesforce-query ><![CDATA[SELECT AccountId,Address,AssetLevel,AssetProvidedById,AssetServicedById,City,ContactId,Country,CreatedById,CreatedDate,CurrentAmount,CurrentLifecycleEndDate,CurrentMrr,CurrentQuantity,Description,GeocodeAccuracy,HasLifecycleManagement,Id,InstallDate,IsCompetitorProduct,IsDeleted,IsInternal,LastModifiedById,LastModifiedDate,LastReferencedDate,LastViewedDate,Latitude,LifecycleEndDate,LifecycleStartDate,Longitude,Name,OwnerId,ParentId,PostalCode,Price,Product2Id,ProductCode,PurchaseDate,Quantity,RootAssetId,SerialNumber,State,Status,StockKeepingUnit,Street,SystemModstamp,TotalLifecycleAmount,UsageEndDate FROM Asset
+where Id = ':id']]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[{"id": vars.id}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="taking response from query as payload" doc:id="fcd4cead-548f-4958-87b9-aafa950590b1">
+			<ee:message>
+				<ee:set-payload resource="dwlScripts\Getbyid-Response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="retrieving a particular asset by Id implementation gets ended" doc:id="31b6d15d-8d8a-4308-8c15-2c07bd4f63ce" message="getting_asset_by_Id_ended" />
+	</sub-flow>
+	<sub-flow name="delete-asset-implementation" doc:id="fad8017b-ae44-48c3-8537-9685b20ad8d4" >
+		<logger level="INFO" doc:name="deleting a particular asset by Id implementation get started" doc:id="015129a4-f16e-4070-b1c6-718470d34e61" message="delete_asset_by_id_started" />
+		<salesforce:delete doc:name="delete asset from salesforce" doc:id="b0f38f6a-d787-4658-8d82-c57e0e891fd8" config-ref="Salesforce_Config1">
+			<salesforce:ids ><![CDATA[#[[attributes.uriParams.id]]]]></salesforce:ids>
+		</salesforce:delete>
+		<ee:transform doc:name="Dw set to create asset response transform" doc:id="ddd9857a-5188-49c7-9520-3d5b2c5f5f0e" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts\Delete-Response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="deleting a particular asset by Id implementation get ended" doc:id="c8c24072-f4b8-42f5-a66c-b222339f7dbd" message="delete_asset_by_id_ended" />
+	</sub-flow>
+	<sub-flow name="update-asset-implementation" doc:id="f350212a-eabc-4f23-8ed0-9fc5bae6319b" >
+		<logger level="INFO" doc:name="updating a particular asset in the salesforce implementation get started" doc:id="48452b35-c25f-4251-b813-6d453bb6371e" message="update_asset_by_id_started" />
+		<ee:transform doc:name="Transform Message" doc:id="f85d3691-0ff4-4da2-a294-39ab5c734d22" >
+			<ee:variables >
+				<ee:set-variable variableName="id" ><![CDATA[attributes.uriParams.'id']]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Dw set to update asset request transform" doc:id="982133b4-c1f4-4b86-a45f-6b6fdb6c2778">
+			<ee:message>
+				<ee:set-payload resource="dwlScripts\Put-Request.dwl" />
+			</ee:message>
+		</ee:transform>
+		<salesforce:update type="Asset" doc:name="update asset on salesforce" doc:id="f68705d8-65a7-4495-8af3-8d79a3a40828" config-ref="Salesforce_Config1"/>
+		<ee:transform doc:name="Dw set to update asset response transform" doc:id="d0256404-c85a-4f8a-b3dc-019bedc7811e" >
+			<ee:message >
+				<ee:set-payload resource="dwlScripts\Put-Response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="updating a particular asset in the salesforce implementation get ended" doc:id="08b64cad-c703-4dcc-b975-0dd7d12a93e7" message="update_asset_by_id_ended" />
+	</sub-flow>
+</mule>

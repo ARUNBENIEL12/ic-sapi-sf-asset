@@ -1,0 +1,73 @@
+#%RAML 1.0
+title: ic-sfdc-sapi-asset
+description: salesforce asset Integrations
+version: v1
+protocols: [HTTPS]
+mediaType: 
+  - application/json
+
+traits: 
+    client-id-required:
+      headers:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+    trackingParams:
+     headers:
+      X-Correlation-ID:
+        description: A unique identifier for this message, to enable tracking, reporting, and correlation.
+        type: string
+        required: true
+resourceTypes:
+  commonresourceType: !include /resource Type/AllCollections.raml
+uses:
+  errordataType:  /resources/libraries/ErrorDataType.raml
+  assetCreateDataType:  /resources/libraries/PostAssetDataType.raml
+  assetUpdateDataType:  /resources/libraries/PutAssetDataType.raml
+  assetGetDatatype: /resources/libraries/GetAssetDataType.raml
+  assetGetbyIdDatatype: /resources/libraries/GetAssetByIdDataType.raml
+  assetDeleteDatatype: /resources/libraries/DeleteAssetDataType.raml
+
+/asset:
+  type:
+    commonresourceType:
+      get-response-example: !include /examples/response/getAssetExample.json
+      get-response-schema: assetGetDatatype.get_asset_response 
+      post-request-example: !include /examples/request/PostAssetExample.json
+      post-request-schema: assetCreateDataType.post_asset_request
+      post-response-example: !include /examples/response/createAssetExample.json
+      post-response-schema: assetCreateDataType.post_asset_response
+      errors-schema: errordataType.error
+  get:
+    is:
+      - trackingParams
+      - client-id-required
+  post:
+    is:
+      - client-id-required 
+      - trackingParams
+  /{id}:
+    type:
+      commonresourceType:
+        put-request-schema: assetUpdateDataType.put_asset_request
+        put-request-example: !include /examples/request/PutAssetExample.json
+        put-response-example: !include /examples/response/updateAssetExample.json
+        put-response-schema: assetUpdateDataType.put_asset_response
+        get-response-schema: assetGetbyIdDatatype.get_assetby_Id_response
+        get-response-example: !include /examples/response/getbyidAssetExample.json
+        delete-response-example: !include /examples/response/deleteAssetExample.json
+        delete-response-schema: assetDeleteDatatype.delete
+        errors-schema: errordataType.error
+    get:
+      is: 
+      - trackingParams
+      - client-id-required
+    delete:
+      is:
+        - trackingParams
+        - client-id-required
+    put:
+      is:
+        - trackingParams
+        - client-id-required   

@@ -1,0 +1,21 @@
+[
+  {
+  "accountid": "001xx000003Dxxx",
+  "name": "Laptop",
+  "description": "Powerful laptop",
+  "status": "shipped",
+  "price": 1500,
+  "quantity": 1.00,
+  "id": "02i5j00000CNlzuAAD"
+
+},
+{
+  "accountid": "001xx000003Dxxx",
+  "name": "mobile",
+  "description": "Powerful mobile",
+  "status": "shipped",
+  "price": 1500,
+  "quantity": 1.00,
+  "id": "02i5j00000CNlzuAAD"
+}
+]

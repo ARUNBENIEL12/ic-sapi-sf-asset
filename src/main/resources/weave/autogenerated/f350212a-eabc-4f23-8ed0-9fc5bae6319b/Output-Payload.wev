@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_f350212a_eabc_4f23_8ed0_9fc5bae6319b_Output_Payload = Array<{  quantity?: Number,   price?: Number,   name: String,   description?: String,   id: String,   status?: String,   _?: Any}> {"description": "retrieving by id"}
+

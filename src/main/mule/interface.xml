@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+    <http:listener-config name="ic-sfdc-sapi-asset-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8082" protocol="HTTPS">
+			<tls:context >
+				<tls:key-store type="jks" keyPassword="mulesoft" password="mulesoft" path="keystore\server-keystore.jks"/>
+			</tls:context>
+		</http:listener-connection>
+    </http:listener-config>
+    <apikit:config name="ic-sfdc-sapi-asset-config" api="ic-sfdc-sapi-asset.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<flow name="ic-sfdc-sapi-asset-main">
+        <http:listener config-ref="ic-sfdc-sapi-asset-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="ic-sfdc-sapi-asset-config" />
+    </flow>
+    <flow name="ic-sfdc-sapi-asset-console" doc:id="b0282590-c989-40eb-ad8b-2c849471734d">
+        <http:listener config-ref="ic-sfdc-sapi-asset-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="ic-sfdc-sapi-asset-config" />
+    </flow>
+    <flow name="put:\asset\(id):application\json:ic-sfdc-sapi-asset-config">
+		<flow-ref doc:name="Flow Reference" doc:id="e66e026a-e34a-47cc-ab47-0a630c35d36e" name="update-asset-implementation"/>
+    </flow>
+    <flow name="delete:\asset\(id):ic-sfdc-sapi-asset-config">
+        <flow-ref doc:name="Flow Reference" doc:id="76944864-b5c0-4c4e-b583-1f9ca18d51c8" name="delete-asset-implementation"/>
+    </flow>
+    <flow name="get:\asset:ic-sfdc-sapi-asset-config">
+		<flow-ref doc:name="Flow Reference" doc:id="4a766445-95ee-47d4-8393-be8e5df6b05a" name="getall-asset-implementation"/>
+    </flow>
+    <flow name="get:\asset\(id):ic-sfdc-sapi-asset-config">
+		<flow-ref doc:name="Flow Reference" doc:id="53c0418a-a304-4d9d-a0fd-9c351d2e117d" name="get-by-id-asset-implementation"/>
+    </flow>
+	<flow name="post:\asset:application\json:ic-sfdc-sapi-asset-config" doc:id="afb80202-b693-4e08-91c6-15f58f0b137f">
+		<flow-ref doc:name="Flow Reference" doc:id="6c19a2d2-ea65-461e-a5b5-d50e2277933f" name="create-asset-implementation"/>
+    </flow>
+</mule>
